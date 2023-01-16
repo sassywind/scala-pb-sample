@@ -21,4 +21,5 @@ lazy val root = (project in file("."))
       Libraries.grpcNetty
     )
   )
+  .dependsOn(`contract-grpc-proto-interface`)
   .aggregate(`contract-grpc-proto-interface`)

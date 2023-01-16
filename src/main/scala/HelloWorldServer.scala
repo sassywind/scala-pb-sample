@@ -1,4 +1,5 @@
-import io.grpc.{Server, ServerBuilder}
+import interceptor.HeaderServerInterceptor
+import io.grpc.{Server, ServerBuilder, ServerInterceptors}
 import sample.helloworld.{GreeterGrpc, HelloReply, HelloRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +16,12 @@ class HelloWorldServer(executionContext: ExecutionContext) { self =>
   private def start(): Server = {
     ServerBuilder
       .forPort(HelloWorldServer.port)
-      .addService(GreeterGrpc.bindService(new GreeterImpl, executionContext))
+      .addService(
+        ServerInterceptors.intercept(
+          GreeterGrpc.bindService(new GreeterImpl, executionContext),
+          new HeaderServerInterceptor
+        )
+      )
       .build()
       .start
   }
